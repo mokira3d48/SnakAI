@@ -11,28 +11,23 @@
 Une application Python qui permet de gérer des tâches de manière efficace.
 
 ## Table des matières
-- [Description](#description)
 - [Installation](#installation)
 - [Utilisation](#utilisation)
 - [Fonctionnalités](#fonctionnalités)
-- [Tests](#tests)
 - [Contribuer](#contribuer)
 - [Licence](#licence)
 - [Contact](#contact)
 
 
-## Description
-
-Mon Projet Python est une application simple qui permet aux utilisateurs de créer, lire, mettre à jour et supprimer des tâches. Il est conçu pour être facile à utiliser et à étendre.
-
 ## Installation
 
-Pour installer le projet, assurez-vous d'avoir Python 3.7 ou une version ultérieure et `pip` installés sur votre machine. Ensuite, exécutez les commandes suivantes :
 
 ```bash
-git clone https://github.com/username/mon-projet-python.git
-cd mon-projet-python
-pip install -r requirements.txt
+git clone https://github.com/mokira3d48/SnakAI.git
+cd SnakAI
+python3 -m venv env
+source env/bin/activate
+make install
 ```
 
 ## Utilisation
@@ -42,25 +37,20 @@ pip install -r requirements.txt
 4. `make install` install the requirements of this package;
 5. `make dev` install the package in dev mode in virtual environment;
 6. `make test` run the unit test scripts located at `tests` directory;
-7. `mkae run` run script located at `src/package_name/__main__.py`.
+7. `mkae run` run script located at `src/snakai/__main__.py`.
 
 ### Exemple d'utilisation
 
-Voici un exemple de la façon d'ajouter une nouvelle tâche :
+Pour demarrer l'entrainement du modele :
 
-```python
-from task_manager import TaskManager
-
-manager = TaskManager()
-manager.add_task("Faire les courses")
+```sh
+make run
 ```
 
 ## Fonctionnalités
 
-- Ajouter des tâches
-- Marquer des tâches comme complètes
-- Supprimer des tâches
-- Afficher toutes les tâches
+- Entraîner l'agent à jouer au jeux de serpent.
+
 
 ## Tests
 
@@ -109,4 +99,3 @@ Pour toute question ou suggestion, veuillez contacter :
 
 Cet exemple de `README.md` est structuré et informatif, ce qui le rend utile
 pour les utilisateurs et les contributeurs potentiels.
-
