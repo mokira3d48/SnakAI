@@ -5,6 +5,7 @@ from typing import final
 
 import numpy as np
 import torch
+from sympy.integrals.rationaltools import ratint
 
 from .utils import plot
 from .game import SnakeGameAI, Direction, Point
@@ -21,8 +22,9 @@ LR = 0.001
 class Agent:
     def __init__(self):
         self.n_games = 0
+        self.max_games = 250
         self.epsilon = 1  # randomness
-        self.greedy = 0.85
+        self.greedy = 0.90
         self.gamma = 0.9  # discount rate
         self.memory = deque(maxlen=MAX_MEMORY)  # popleft()
 
@@ -104,9 +106,14 @@ class Agent:
 
     def get_action(self, state):
         # random moves: tradeoff exploration / exploitation
-        self.epsilon = 1 - (self.n_games / 500) * self.greedy
+        # if self.n_games >= self.max_games:
+        #     ratio = 1.0
+        # else:
+        #     ratio = (self.n_games / self.max_games)
+        ratio = len(self.memory) / MAX_MEMORY
+        self.epsilon = 1 - ratio * self.greedy
         final_move = [0, 0, 0]
-        if random.uniform(0, 1) < self.epsilon:
+        if  random.uniform(0, 1) < self.epsilon:
             move_index = random.randint(0, 2)
             final_move[move_index] = 1
         else:
