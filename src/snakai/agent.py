@@ -22,6 +22,7 @@ class Agent:
     def __init__(self):
         self.n_games = 0
         self.epsilon = 1  # randomness
+        self.greedy = 0.85
         self.gamma = 0.9  # discount rate
         self.memory = deque(maxlen=MAX_MEMORY)  # popleft()
 
@@ -103,7 +104,7 @@ class Agent:
 
     def get_action(self, state):
         # random moves: tradeoff exploration / exploitation
-        # self.epsilon = 200 - self.n_games
+        self.epsilon = 1 - (self.n_games / 500) * self.greedy
         final_move = [0, 0, 0]
         if random.uniform(0, 1) < self.epsilon:
             move_index = random.randint(0, 2)
@@ -169,10 +170,9 @@ def train():
             # Saving of the best score registered:
             if score > record:
                 record = score
-                agent.epsilon = 1 - (record / 100)
                 agent.model.save()
-                LOG.info("epsilon: " + str(agent.epsilon))
             print('Game:', agent.n_games, 'Score:', score, 'Record:', record)
+            LOG.info("epsilon: " + str(agent.epsilon))
 
             total_score += score
             mean_score = total_score / agent.n_games

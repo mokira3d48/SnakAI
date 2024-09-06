@@ -14,6 +14,7 @@ ant this projet adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.
 ### Changed
 - The number of layers of the model is increased to 3.
 - The way of epsilon value change is change.
+- Greedy value is introduced into epsilon calculus.
 
 
 <!--
