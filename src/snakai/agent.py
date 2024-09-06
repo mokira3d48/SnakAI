@@ -1,6 +1,7 @@
 import logging
 import random
 from collections import deque
+from typing import final
 
 import numpy as np
 import torch
@@ -23,21 +24,97 @@ class Agent:
         self.memory = deque(maxlen=MAX_MEMORY)  # popleft()
 
         # TODO: model, trainer
+        self.model = None
+        self.trainer = None
 
-    def get_state(self, game):
-        ...
+    def get_state(self, game):  # noqa
+        """
+        :param game: The instance of the game environment.
+        :type game: `SnakeGameAI`
+        :rtype: `np.array`
+        """
+        head = game.snake[0]
+        point_l = Point(head.x - 20, head.y)
+        point_r = Point(head.x + 20, head.y)
+        point_u = Point(head.x, head.y - 20)
+        point_d = Point(head.x, head.y + 20)
+
+        dir_l = game.direction == Direction.LEFT
+        dir_r = game.direction == Direction.RIGHT
+        dir_u = game.direction == Direction.UP
+        dir_d = game.direction == Direction.DOWN
+
+        state = [
+            # Danger straight:
+            (dir_r and game.is_collision(point_r)) or \
+            (dir_l and game.is_collision(point_l)) or \
+            (dir_u and game.is_collision(point_u)) or \
+            (dir_d and game.is_collision(point_d)),
+
+            # Danger right:
+            (dir_r and game.is_collision(point_d)) or \
+            (dir_l and game.is_collision(point_u)) or \
+            (dir_u and game.is_collision(point_r)) or \
+            (dir_d and game.is_collision(point_l)),
+
+            # Danger left:
+            (dir_r and game.is_collision(point_u)) or \
+            (dir_l and game.is_collision(point_d)) or \
+            (dir_u and game.is_collision(point_l)) or \
+            (dir_d and game.is_collision(point_r)),
+
+            # Move direction:
+            dir_r,
+            dir_l,
+            dir_u,
+            dir_d,
+
+            # Food location:
+            game.food.x < game.head.x,  # food left
+            game.food.x > game.head.x,  # food right
+            game.food.y < game.head.y,  # food up
+            game.food.y > game.head.y,  # food down
+        ]
+
+        state = np.array(state, dtype=int)
+        return state
 
     def remember(self, state, action, reward, next_state, done):
-        ...
+        self.memory.append((state, action, reward, next_state, done))
+        # It will popleft when the MAX_MEMORY will reach.
 
     def train_long_memory(self):
-        ...
+        if len(self.memory) > BATCH_SIZE:
+            # mini_sample is `list` of `tuple`
+            mini_sample = random.sample(self.memory, BATCH_SIZE)
+        else:
+            mini_sample = self.memory
+        states, actions, rewards, next_states, dones = zip(*mini_sample)
+        self.trainer.train_step(states, actions, rewards, next_states, dones)
 
     def train_short_memory(self, state, action, reward, next_state, done):
-        ...
+        self.trainer.train_step(state, action, reward, next_state, done)
 
     def get_action(self, state):
-        ...
+        # random moves: tradeoff exploration / exploitation
+        self.epsilon = 80 - self.n_games
+        final_move = [0, 0, 0]
+        if random.randint(0, 200) < self.epsilon:
+            move_index = random.randint(0, 2)
+            final_move[move_index] = 1
+        else:
+            # For example:
+            #   state0      -> [0., 0., 1., 0., ..., 0., 1., 1., 0., 1.]
+            #   predictions -> [4.3, 5.2, 7.8]
+            #   move_index  -> 2
+            #   final_move  -> [0, 0, 1]
+            state0 = torch.tensor(state, dtype=torch.float)
+            predictions = self.model.predict(state0)
+            move_index = torch.argmax(predictions).item()
+            final_move[move_index] = 1
+
+        return final_move  # 1:11:01
+
 
 
 def train():
@@ -73,7 +150,22 @@ def train():
             reward,
             state_new,
             done
-        )  # 00:52:53
+        )
+
+        if done:
+            # The game is over, or done, or terminal of game is shutdown,
+            # in this case, the game is stopped, so the agent should train
+            # with the data stored in long memory. It should learn
+            # from its mistakes.
+            game.reset()
+            agent.n_games += 1
+            agent.train_long_memory()
+
+            # Saving of the best score registered:
+            if score > record:
+                record = score
+                # agent.model.save()
+            print('Game:', agent.n_games, 'Score:', score, 'Record:', record)
 
 
 if __name__ == '__main__':
