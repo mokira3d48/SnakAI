@@ -1,8 +1,12 @@
+<div align="center">
+
 # SnakAI Project
 ![](https://img.shields.io/badge/Python-3.10.12-blue)
 ![](https://img.shields.io/badge/LICENSE-MIT-%2300557f)
 ![](https://img.shields.io/badge/lastest-2024--07--13-green)
 ![](https://img.shields.io/badge/contact-dr.mokira%40gmail.com-blueviolet)
+
+</div>
 
 I'll guide you through creating a complete Snake game implementation and then training a Reinforcement Learning (RL) algorithm to play it. We'll start with the game implementation using PyGame, then implement Q-learning to train an AI agent to play Snake autonomously. The approach will be step-by-step, ensuring you understand both game development and RL concepts.
 
