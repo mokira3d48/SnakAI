@@ -6,7 +6,8 @@
 ![](https://img.shields.io/badge/lastest-2024--07--13-green)
 ![](https://img.shields.io/badge/contact-dr.mokira%40gmail.com-blueviolet)
 
-![](./snake_rl.png)
+
+<img width="50%" src="./snake_rl.png"/>
 
 </div>
 
