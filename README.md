@@ -15,8 +15,9 @@ I'll guide you through creating a complete Snake game implementation and then tr
 
 **Keywords**: Snake game, Reinforcement Learning, Q-learning, PyGame, Markov Decision Process, Bellman equation, epsilon-greedy, state representation, reward function, neural networks, deep Q-learning.
 
-
-<img width="50%" height="50%" src="./snake_rl.png"/>
+<div align="center">
+<img width="60%" height="60%" src="./snake_rl.png"/>
+</div>
 
 
 # Introduction
